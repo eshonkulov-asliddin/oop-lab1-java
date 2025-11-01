@@ -1,0 +1,53 @@
+
+name: Build and Test Maven Project
+
+on:
+  workflow_dispatch:
+  
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Build with Maven
+      id: build
+      run: mvn -B compile --file pom.xml
+
+    - name: Generate Build Error Report
+      if: failure()
+      run: |
+        echo "Build outcome: ${{ steps.build.outcome }}"
+        mkdir -p target/surefire-reports
+        echo '<?xml version="1.0" encoding="UTF-8"?>' > target/surefire-reports/test-results.xml
+        echo '  <testsuite name="Build Error" time="0" tests="1" errors="1" skipped="0" failures="1">' >> target/surefire-reports/test-results.xml
+        echo '    <testcase name="Build" classname="" time="0">' >> target/surefire-reports/test-results.xml
+        echo '      <failure type="Compilation Error"><![CDATA[' >> target/surefire-reports/test-results.xml
+        echo '      ]]></failure>' >> target/surefire-reports/test-results.xml
+        echo '    </testcase>' >> target/surefire-reports/test-results.xml
+        echo '  </testsuite>' >> target/surefire-reports/test-results.xml
+
+    - name: Run Tests with Maven
+      id: test
+      run: |
+        mvn clean
+        mvn -B test --file pom.xml
+          
+    - name: Upload a Build Artifact
+      if: always()
+      uses: actions/upload-artifact@v4.3.5
+      with:
+        # Artifact name
+        name: tet-results
+        path: target/surefire-reports/*.xml
+  
+  
+          
