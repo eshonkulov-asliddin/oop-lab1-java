@@ -31,13 +31,16 @@ jobs:
       - name: Call Webhook
         if: always()
         run: |
-          curl -X POST \
+          curl -X POST "https://eshonkulov-asliddin.jprq.live/workflow/results" \
             -H "Content-Type: application/json" \
             -d '{
-              "repository": "${{ github.repository }}",
-              "run_id": "${{ github.run_id }}",
               "status": "${{ job.status }}",
-              "actor": "${{ github.actor }}",
-              "ref": "${{ github.ref }}"
-            }' \
-            https://eshonkulov-asliddin.jprq.live/workflow/results
+              "repository": {
+                "name": "${{ github.repository }}",
+                "owner": "${{ github.repository_owner }}"
+              },
+              "branch": "${{ github.ref_name }}",
+              "commit": "${{ github.sha }}",
+              "runId": "${{ github.run_id }}",
+              "runNumber": "${{ github.run_number }}"
+            }'
