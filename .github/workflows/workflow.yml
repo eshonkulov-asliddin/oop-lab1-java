@@ -3,8 +3,41 @@ name: Build and Test Maven Project
 on:
   workflow_dispatch:
 
+# Original reusable workflow (commented out)
+# jobs:
+#   build-and-test:
+#     uses: mu-university/autocode-reusable-workflows/.github/workflows/maven-build-test.yml@main
+#     with:
+#       webhook-url: 'https://eshonkulov-asliddin.jprq.live/workflow/results'
+
 jobs:
   build-and-test:
-    uses: mu-university/autocode-reusable-workflows/.github/workflows/maven-build-test.yml@main
-    with:
-      webhook-url: 'https://eshonkulov-asliddin.jprq.live/workflow/results'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build and Test
+        run: mvn clean verify
+
+      - name: Call Webhook
+        if: always()
+        run: |
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -d '{
+              "repository": "${{ github.repository }}",
+              "run_id": "${{ github.run_id }}",
+              "status": "${{ job.status }}",
+              "actor": "${{ github.actor }}",
+              "ref": "${{ github.ref }}"
+            }' \
+            https://eshonkulov-asliddin.jprq.live/workflow/results
