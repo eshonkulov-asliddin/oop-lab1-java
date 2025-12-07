@@ -6,8 +6,5 @@ on:
 jobs:
   build-and-test:
     uses: mu-university/autocode-reusable-workflows/.github/workflows/maven-build-test.yml@main
-    # Optional: override defaults
-    # with:
-    #   java-version: '21'
-    #   artifact-name: 'my-test-results'
-
+    with:
+      webhook-url: 'https://eshonkulov-asliddin.jprq.live/workflow/results'
