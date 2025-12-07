@@ -6,3 +6,5 @@ on:
 jobs:
   build-and-test:
     uses: mu-university/autocode-reusable-workflows/.github/workflows/maven-build-test.yml@main
+    with:
+      webhook-url: 'https://eshonkulov-asliddin.jprq.live/workflow/results'
