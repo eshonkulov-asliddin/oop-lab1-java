@@ -1,0 +1,13 @@
+name: Build and Test Maven Project
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    uses: mu-university/autocode-reusable-workflows/.github/workflows/maven-build-test.yml@main
+    # Optional: override defaults
+    # with:
+    #   java-version: '21'
+    #   artifact-name: 'my-test-results'
+
