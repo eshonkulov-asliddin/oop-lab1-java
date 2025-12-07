@@ -6,11 +6,3 @@ on:
 jobs:
   build-and-test:
     uses: mu-university/autocode-reusable-workflows/.github/workflows/maven-build-test.yml@main
-
-  notify:
-    needs: build-and-test
-    if: always()
-    uses: mu-university/autocode-reusable-workflows/.github/workflows/notify-completion.yml@main
-    with:
-      webhook-url: 'https://eshonkulov-asliddin.jprq.live/workflow/results'
-      build-status: ${{ needs.build-and-test.result }}
